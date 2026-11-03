@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Zeitverteilung encoviva</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Maven+Pro:wght@500;700&family=Mulish:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+body { margin: 0 }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px) }
+[hidden] { display: none !important }
+/* Layout: one narrow column for phone input; evaluations widen to a two-column report on desktop. */
+:root {
+  --bg: #F6F9F7; --surface: #FFFFFF; --ink: #0C1F19; --mute: #5B6B66; --line: #D6E0DB;
+  --deep: #014233; --accent: #237354; --mint: #E2F9D0; --leaf: #C9E1BA;
+  --warn: #B4631E; --warn-bg: #FBEBDD; --ok: #237354; --bad: #B23A2E; --bad-bg: #F9E3E0;
+  --more: #237354; --less: #B4631E; --same: #A8B5B0;
+  --display: "Maven Pro", "Segoe UI", system-ui, sans-serif;
+  --body: "Mulish", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0B1713; --surface: #12221C; --ink: #E5EFEA; --mute: #93A69F; --line: #2A3D36;
+  --deep: #CFEBC0; --accent: #6CC495; --mint: #1D3B2F; --leaf: #2F5A47;
+  --warn: #E7A766; --warn-bg: #3A2A1B; --ok: #6CC495; --bad: #F08A7E; --bad-bg: #3A1F1C;
+  --more: #6CC495; --less: #E7A766; --same: #5E716A; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0B1713; --surface: #12221C; --ink: #E5EFEA; --mute: #93A69F; --line: #2A3D36;
+  --deep: #CFEBC0; --accent: #6CC495; --mint: #1D3B2F; --leaf: #2F5A47;
+  --warn: #E7A766; --warn-bg: #3A2A1B; --ok: #6CC495; --bad: #F08A7E; --bad-bg: #3A1F1C;
+  --more: #6CC495; --less: #E7A766; --same: #5E716A; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--body); font-variant-numeric: tabular-nums;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 48px }
+h1, h2, h3 { font-family: var(--display); color: var(--deep); margin: 0; text-wrap: balance; line-height: 1.2 }
+h1 { font-size: 1.55rem } h2 { font-size: 1.15rem } h3 { font-size: 1rem }
+p { margin: 0 }
+.wrap { max-width: 760px; margin: 0 auto; display: grid; gap: 20px }
+.wrap.wide { max-width: 1120px }
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 14px 10px; border-bottom: 1px solid var(--line); margin-bottom: 20px }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg) }
+.toprow { max-width: 1120px; margin: 0 auto; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap }
+.brand { display: flex; flex-direction: column; gap: 2px }
+.eyebrow { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--accent) }
+nav.tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px }
+nav.tabs a { text-decoration: none; color: var(--mute); font-weight: 700; font-size: .85rem; padding: 6px 14px; border-radius: 999px }
+nav.tabs a[aria-current="page"] { background: var(--deep); color: var(--bg) }
+nav.tabs a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.section { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 14px; min-width: 0 }
+.section-head { display: flex; gap: 10px; align-items: baseline; justify-content: space-between; flex-wrap: wrap }
+.hint { color: var(--mute); font-size: .88rem }
+.req { color: var(--accent); font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: .06em }
+.opt { color: var(--mute); font-size: .75rem; text-transform: uppercase; letter-spacing: .06em }
+.field { display: grid; gap: 6px }
+.label { font-weight: 700; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap }
+.seg { display: flex; flex-wrap: wrap; gap: 6px }
+.seg button { font: inherit; font-weight: 600; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 10px; padding: 9px 14px; cursor: pointer; min-height: 42px }
+.seg button[aria-pressed="true"] { background: var(--deep); border-color: var(--deep); color: var(--bg) }
+.seg.small button { padding: 5px 10px; min-height: 34px; font-size: .85rem }
+.seg.small button[data-v="mehr"][aria-pressed="true"] { background: var(--more); border-color: var(--more); color: var(--bg) }
+.seg.small button[data-v="weniger"][aria-pressed="true"] { background: var(--less); border-color: var(--less); color: var(--bg) }
+.seg.small button[data-v="gleich"][aria-pressed="true"] { background: var(--same); border-color: var(--same); color: var(--ink) }
+select, textarea, input[type="number"] { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; min-height: 42px; width: 100% }
+textarea { min-height: 70px; resize: vertical }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }
+@media (max-width: 560px) { .grid2 { grid-template-columns: 1fr } }
+.arealist { display: grid; gap: 4px }
+.subhead { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--mute); padding: 10px 0 2px }
+.arow { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line) }
+.arow:last-child { border-bottom: 0 }
+.arow .name { min-width: 0; overflow-wrap: anywhere; hyphens: auto }
+input[type="number"] { -moz-appearance: textfield; appearance: textfield }
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0 }
+.idealrow span, .bar .lbl, .stack .lbl { hyphens: auto }
+.arow .name small { display: block; color: var(--mute); font-size: .8rem }
+.arow.sub .name { padding-left: 14px }
+.stepper { display: flex; align-items: center; gap: 4px }
+.stepper button { font: inherit; font-weight: 700; width: 34px; height: 38px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); color: var(--deep); cursor: pointer }
+.stepper input { width: 58px; text-align: right; padding-right: 8px }
+.pct { color: var(--mute); font-size: .85rem; width: 14px }
+.sumbar { position: sticky; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); z-index: 4; display: flex; align-items: center; gap: 12px; justify-content: space-between;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; box-shadow: 0 6px 20px rgba(0,0,0,.08) }
+.sumbar .meter { flex: 1; height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; min-width: 60px }
+.sumbar .meter i { display: block; height: 100%; background: var(--warn); transition: width .2s }
+.sumbar.ok .meter i { background: var(--ok) } .sumbar.over .meter i { background: var(--bad) }
+.sumbar b { font-family: var(--display); font-size: 1.15rem; color: var(--deep) }
+.sumbar .state { font-size: .85rem; font-weight: 700; color: var(--warn) }
+.sumbar.ok .state { color: var(--ok) } .sumbar.over .state { color: var(--bad) }
+.idealrow { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line) }
+.idealrow:last-child { border-bottom: 0 }
+@media (max-width: 480px) { .idealrow { grid-template-columns: 1fr } }
+.shift { display: grid; gap: 8px; padding: 12px; border-radius: 12px; background: var(--bg) }
+.primary { font: inherit; font-weight: 700; background: var(--deep); color: var(--bg); border: 0; border-radius: 12px; padding: 13px 20px; cursor: pointer; min-height: 48px }
+.primary:disabled { opacity: .45; cursor: not-allowed }
+.ghost { font: inherit; font-weight: 700; background: transparent; color: var(--deep); border: 1px solid var(--line); border-radius: 12px; padding: 10px 16px; cursor: pointer }
+.danger { color: var(--bad); border-color: var(--bad) }
+.actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap }
+.banner { border-radius: 12px; padding: 12px 14px; font-size: .9rem; background: var(--warn-bg); color: var(--ink) }
+.banner.err { background: var(--bad-bg) }
+.done { text-align: left; display: grid; gap: 12px; background: var(--mint); border: 0 }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px }
+.kpi { background: var(--bg); border-radius: 12px; padding: 12px }
+.kpi b { display: block; font-family: var(--display); font-size: 1.6rem; color: var(--deep); line-height: 1.1 }
+.kpi span { font-size: .8rem; color: var(--mute) }
+.bars { display: grid; gap: 7px }
+.bar { display: grid; grid-template-columns: minmax(120px, 1.1fr) 2fr 52px; gap: 10px; align-items: center; font-size: .88rem }
+.bar .lbl { min-width: 0; overflow-wrap: anywhere }
+.track { position: relative; height: 18px; border-radius: 6px; background: var(--bg) }
+.track .fill { position: absolute; left: 0; top: 4px; height: 10px; border-radius: 4px; background: var(--accent) }
+.track .range { position: absolute; top: 8px; height: 2px; background: var(--deep); opacity: .55 }
+.track .ref { position: absolute; top: 1px; width: 2px; height: 16px; background: var(--warn) }
+.bar .val { text-align: right; font-weight: 700 }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: .8rem; color: var(--mute); align-items: center }
+.legend i { display: inline-block; width: 14px; height: 8px; border-radius: 3px; margin-right: 5px; vertical-align: middle }
+.stack { display: grid; grid-template-columns: minmax(120px, 1.1fr) 2fr 70px; gap: 10px; align-items: center; font-size: .88rem }
+.stack .s { display: flex; height: 14px; border-radius: 5px; overflow: hidden; background: var(--bg) }
+.stack .s i { display: block; height: 100% }
+.stack .net { text-align: right; font-weight: 700 }
+@media (max-width: 520px) { .bar, .stack { grid-template-columns: 1fr 52px; } .bar .track, .stack .s { grid-column: 1 / -1; grid-row: 2 } }
+.texts { display: grid; gap: 10px }
+.tgroup h3 { font-size: .92rem; margin-bottom: 4px }
+.tgroup ul { margin: 0; padding-left: 18px; display: grid; gap: 4px }
+.tgroup li { overflow-wrap: anywhere }
+.tablewrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--line) }
+table.heat { border-collapse: collapse; width: 100%; font-size: .85rem; min-width: 760px }
+.heat th, .heat td { padding: 7px 8px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap }
+.heat th:first-child, .heat td:first-child { text-align: left; position: sticky; left: 0; background: var(--surface) }
+.heat thead th { font-size: .75rem; color: var(--mute); text-transform: uppercase; letter-spacing: .04em; background: var(--surface) }
+.heat td.na { color: var(--mute) }
+.heat tr.sub td:first-child { padding-left: 20px; color: var(--mute) }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px }
+@media (max-width: 900px) { .cols { grid-template-columns: 1fr } }
+.empty { color: var(--mute); font-size: .92rem; padding: 18px; text-align: center; border: 1px dashed var(--line); border-radius: 12px }
+.confirm { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: var(--bad-bg); padding: 10px 12px; border-radius: 10px }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+
+.goal { display: grid; grid-template-columns: auto auto auto 1fr; gap: 10px 14px; align-items: end; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px }
+.goalcell { display: grid; gap: 2px; min-width: 0 }
+.goallbl { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--mute) }
+.goalcell b { font-family: var(--display); font-size: 1.15rem; color: var(--deep); line-height: 42px }
+.goalarrow { color: var(--mute); font-size: 1.2rem; line-height: 42px }
+.goalin { display: flex; align-items: center; gap: 4px }
+.goalin input { width: 72px; text-align: right; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 8px; min-height: 42px }
+.delta.up { color: var(--more) } .delta.down { color: var(--less) }
+@media (max-width: 420px) { .goal { grid-template-columns: auto auto 1fr } .goal .goalcell:last-child { grid-column: 1 / -1 } .goalcell b { line-height: 1.4 } }
+table.goals { border-collapse: collapse; width: 100%; font-size: .88rem; min-width: 480px }
+.goals th, .goals td { padding: 7px 8px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap }
+.goals th:first-child, .goals td:first-child { text-align: left; white-space: normal }
+.goals thead th { font-size: .75rem; color: var(--mute); text-transform: uppercase; letter-spacing: .04em }
+.tag { display: inline-block; font-size: .78rem; font-weight: 700; color: var(--deep); background: var(--mint); border-radius: 6px; padding: 1px 6px; white-space: nowrap }
+footer.note { max-width: 760px; margin: 28px auto 0; color: var(--mute); font-size: .8rem; text-align: center }
+
+</style>
+</head>
+<body>
+<header class="top" lang="de">
+  <div class="toprow">
+    <div class="brand">
+      <span class="eyebrow">encoviva Gruppenmeeting · Unternehmensentwicklung</span>
+      <h1>Wie verteilt sich deine Zeit?</h1>
+    </div>
+    <nav class="tabs" aria-label="Ansicht">
+      <a href="#eingabe" id="tab-eingabe">Eingabe</a>
+      <a href="#gruppe" id="tab-gruppe">Gruppe</a>
+      <a href="#gesamt" id="tab-gesamt" hidden>Gesamt</a>
+    </nav>
+  </div>
+</header>
+
+<main id="view-eingabe" class="wrap" lang="de">
+  <div id="banner" class="banner" hidden></div>
+
+  <form id="form" class="wrap" novalidate>
+    <section class="section" aria-labelledby="h-person">
+      <div class="section-head"><h2 id="h-person">Zu deiner Person</h2><span class="hint">Anonym. Position, Geschäftsfeld und Gruppe sind Pflicht.</span></div>
+      <div class="field">
+        <div class="label">Position <span class="req">Pflicht</span></div>
+        <div class="seg" id="pos" role="group" aria-label="Position">
+          <button type="button" data-v="GF">Geschäftsführung</button>
+          <button type="button" data-v="FE2">2. Führungsebene</button>
+        </div>
+      </div>
+      <div class="field">
+        <div class="label">Geschäftsfeld <span class="req">Pflicht</span></div>
+        <div class="seg" id="feld" role="group" aria-label="Geschäftsfeld">
+          <button type="button" data-v="P">Planung</button>
+          <button type="button" data-v="BB">Baumanagement &amp; Beratung</button>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label class="label" for="ges">Gesellschaft <span class="opt">freiwillig</span></label>
+          <select id="ges"><option value="">keine Angabe</option></select>
+        </div>
+        <div class="field">
+          <label class="label" for="gruppe">Gruppe <span class="req">Pflicht</span></label>
+          <select id="gruppe" required><option value="">bitte wählen</option></select>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="h-heute">
+      <div class="section-head"><h2 id="h-heute">Heute: Anteil an deiner gesamten Arbeitszeit</h2></div>
+      <p class="hint">Schätze ehrlich, nicht nach Stellenbeschreibung. Die Summe muss 100 % ergeben.</p>
+      <div class="arealist" id="arealist"></div>
+      <div class="field">
+        <label class="label" for="sonstText">Was ist „Sonstiges“? <span class="opt">freiwillig</span></label>
+        <input id="sonstText" type="text" maxlength="200" style="font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 10px;min-height:42px;width:100%">
+      </div>
+    </section>
+
+    <div class="sumbar" id="sumbar" aria-live="polite">
+      <span>Summe <b id="sumval">0 %</b></span>
+      <span class="meter"><i id="summeter" style="width:0%"></i></span>
+      <span class="state" id="sumstate">noch 100 % offen</span>
+    </div>
+
+    <section class="section" aria-labelledby="h-ideal">
+      <div class="section-head"><h2 id="h-ideal">Idealzustand</h2><span class="opt">freiwillig</span></div>
+      <p class="hint">Würdest du im Idealzustand mehr, gleich viel oder weniger Zeit für diesen Bereich verwenden?</p>
+      <div id="ideallist"></div>
+    </section>
+
+    <section class="section" aria-labelledby="h-shift">
+      <div class="section-head"><h2 id="h-shift">Was muss passieren?</h2><span class="opt">freiwillig</span></div>
+      <p class="hint">Wähle bis zu drei Bereiche mit der größten gewünschten Verschiebung. Dein heutiger Anteil wird übernommen – trage dein persönliches Ziel in % ein und was sich ändern müsste, damit du es erreichst.</p>
+      <div id="shifts" class="wrap" style="gap:10px"></div>
+    </section>
+
+    <div class="actions">
+      <button class="primary" id="submit" type="submit" disabled>Antwort absenden</button>
+      <span class="hint" id="submitHint">Position, Geschäftsfeld, Gruppe und 100 % fehlen noch.</span>
+    </div>
+  </form>
+
+  <section class="section done" id="done" hidden>
+    <h2>Danke, deine Antwort ist gespeichert.</h2>
+    <p>Die Auswertung deiner Gruppe erscheint unter „Gruppe“, sobald dort mindestens 3 Antworten vorliegen. Auf diesem Gerät kannst du deine Antwort noch ändern; am Moderationsgerät bitte „Nächste Person eintragen“ tippen.</p>
+    <div class="actions">
+      <button class="primary" type="button" id="next">Nächste Person eintragen</button>
+      <button class="ghost" type="button" id="edit">Diese Antwort ändern</button>
+      <a class="ghost" href="#gruppe" style="text-decoration:none">Zur Gruppenauswertung</a>
+    </div>
+  </section>
+</main>
+
+<main id="view-gruppe" class="wrap wide" hidden lang="de">
+  <section class="section">
+    <div class="section-head">
+      <h2>Gruppenauswertung</h2>
+      <div class="field" style="min-width:180px"><label class="label" for="gsel">Gruppe</label><select id="gsel"></select></div>
+    </div>
+    <div id="gstatus" class="hint"></div>
+  </section>
+  <div id="gbody" class="wrap wide"></div>
+</main>
+
+<main id="view-gesamt" class="wrap wide" hidden lang="de">
+  <div id="gesbody" class="wrap wide"></div>
+</main>
+<footer class="note" lang="de">Anonym: Es werden keine Namen, E-Mail-Adressen oder IP-Adressen gespeichert. Gruppenauswertungen erscheinen erst ab 3 Antworten.</footer>
+<script>
+const AREAS = [
+  { k: "akq", l: "Akquise", s: "Recherche, zum Kunden gehen, Events" },
+  { k: "ang", l: "Angebot und Kalkulation" },
+  { k: "res", l: "Ressourcen- und Kapazitätsplanung" },
+  { k: "start", l: "Projektstart und -übergabe an das Projektteam" },
+  { k: "op_bau", l: "Baubesprechungen", op: true },
+  { k: "op_qm", l: "Qualitätsmanagement", op: true },
+  { k: "op_kon", l: "Konstruierende Tätigkeit", op: true },
+  { k: "op_pla", l: "Planung und Auslegung", op: true },
+  { k: "ctrl", l: "Projektcontrolling und Abrechnung" },
+  { k: "nach", l: "Änderungs- und Nachtragsmanagement" },
+  { k: "fin", l: "Interne Finanz-Themen" },
+  { k: "pers", l: "Personalführung" },
+  { k: "sonst", l: "Sonstiges", noIdeal: true },
+];
+const COMPANIES = ["Adenbeck", "emproc", "emproc BPM", "emproc KOM", "Etanomics", "etm", "GKK", "HOINKA", "IAS", "ING.FTG", "Juhrig", "S+P", "WSRE", "Andere"];
+const GROUPS = ["1", "2", "3", "4", "5", "6"];
+const GROUP_LABEL = { "1": "Gruppe 1 · Mgmt & Beratung · 1. Ebene", "2": "Gruppe 2 · Planung · 1. Ebene", "3": "Gruppe 3 · Mgmt & Beratung · 2. Ebene",
+  "4": "Gruppe 4 · Mgmt & Beratung · 2. Ebene", "5": "Gruppe 5 · Planung · 2. Ebene", "6": "Gruppe 6 · Planung · 2. Ebene" };
+const POS = { GF: "Geschäftsführung", FE2: "2. Führungsebene" };
+const FELD = { P: "Planung", BB: "Baumanagement & Beratung" };
+const MIN_N = 3, POLL_MS = 15000;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const areaLabel = (k) => { const a = AREAS.find((x) => x.k === k); return a ? (a.op ? "Operativ: " + a.l : a.l) : k; };
+const fmt = (v) => (Math.round(v * 10) / 10).toLocaleString("de-DE", { maximumFractionDigits: 1 });
+const ls = { get(k) { try { return localStorage.getItem(k); } catch (_) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (_) {} }, del(k) { try { localStorage.removeItem(k); } catch (_) {} } };
+
+let adminKey = ls.get("zv-admin") || "";
+let own = null; // { id, token } der eigenen, zuletzt gespeicherten Antwort
+let form = blankForm();
+
+function blankForm() {
+  return { pos: "", feld: "", ges: "", gruppe: "", today: Object.fromEntries(AREAS.map((a) => [a.k, 0])), sonstText: "",
+    ideal: {}, shifts: [0, 1, 2].map(() => ({ a: "", ziel: "", t: "" })) };
+}
+async function api(path, opts = {}) {
+  const r = await fetch(path, { ...opts, headers: { "Content-Type": "application/json", ...(opts.headers || {}) } });
+  let j = null; try { j = await r.json(); } catch (_) {}
+  if (!r.ok) { const e = new Error((j && j.error) || "Fehler " + r.status); e.status = r.status; throw e; }
+  return j;
+}
+
+// ---------- Eingabe ----------
+function buildForm() {
+  $("ges").innerHTML = '<option value="">keine Angabe</option>' + COMPANIES.map((c) => `<option>${esc(c)}</option>`).join("");
+  $("gruppe").innerHTML = '<option value="">bitte wählen</option>' + GROUPS.map((g) => `<option value="${g}">${esc(GROUP_LABEL[g])}</option>`).join("");
+  let html = "", opDone = false;
+  AREAS.forEach((a) => {
+    if (a.op && !opDone) { html += '<div class="subhead">Operative Projektarbeit / Leistungserbringung</div>'; opDone = true; }
+    if (!a.op && opDone && a.k === "ctrl") html += '<div class="subhead">Weitere Bereiche</div>';
+    html += `<div class="arow${a.op ? " sub" : ""}"><div class="name"><label for="p_${a.k}">${esc(a.l)}</label>${a.s ? `<small>${esc(a.s)}</small>` : ""}</div>
+      <div class="stepper"><button type="button" data-k="${a.k}" data-d="-5" aria-label="${esc(a.l)} minus 5">−</button>
+      <input id="p_${a.k}" type="number" inputmode="numeric" min="0" max="100" step="1" data-k="${a.k}" value="0" aria-label="${esc(a.l)} in Prozent">
+      <button type="button" data-k="${a.k}" data-d="5" aria-label="${esc(a.l)} plus 5">+</button><span class="pct">%</span></div></div>`;
+  });
+  $("arealist").innerHTML = html;
+  $("ideallist").innerHTML = AREAS.filter((a) => !a.noIdeal).map((a) => `<div class="idealrow"><span>${esc(areaLabel(a.k))}</span>
+    <div class="seg small" role="group" aria-label="${esc(a.l)}" data-ideal="${a.k}">
+    ${["mehr", "gleich", "weniger"].map((v) => `<button type="button" data-v="${v}">${v}</button>`).join("")}</div></div>`).join("");
+  const opts = '<option value="">Bereich wählen</option>' + AREAS.map((a) => `<option value="${a.k}">${esc(areaLabel(a.k))}</option>`).join("");
+  $("shifts").innerHTML = [0, 1, 2].map((i) => `<div class="shift"><label class="label" for="sa${i}">Verschiebung ${i + 1}</label>
+    <select id="sa${i}" data-shift="${i}">${opts}</select>
+    <div class="goal" id="goal${i}" hidden>
+      <div class="goalcell"><span class="goallbl">Heute</span><b id="gh${i}">0 %</b></div>
+      <span class="goalarrow" aria-hidden="true">→</span>
+      <div class="goalcell"><label class="goallbl" for="gz${i}">Mein Ziel</label>
+        <span class="goalin"><input id="gz${i}" type="number" inputmode="numeric" min="0" max="100" step="1" data-shift-z="${i}" placeholder="–"><span class="pct">%</span></span></div>
+      <div class="goalcell"><span class="goallbl">Veränderung</span><b id="gd${i}" class="delta">–</b></div>
+    </div>
+    <textarea id="st${i}" data-shift-t="${i}" maxlength="600" placeholder="Was muss passieren, damit du dein Ziel erreichst? Wer könnte übernehmen?" aria-label="Verschiebung ${i + 1}: was muss passieren"></textarea></div>`).join("");
+}
+function sum() { return AREAS.reduce((s, a) => s + (Number(form.today[a.k]) || 0), 0); }
+function syncForm() {
+  for (const key of ["pos", "feld"]) $(key).querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(form[key] === b.dataset.v)));
+  $("ges").value = form.ges; $("gruppe").value = form.gruppe; $("sonstText").value = form.sonstText;
+  AREAS.forEach((a) => { const el = $("p_" + a.k); if (document.activeElement !== el) el.value = form.today[a.k] || 0; });
+  document.querySelectorAll("[data-ideal]").forEach((g) => g.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(form.ideal[g.dataset.ideal] === b.dataset.v))));
+  form.shifts.forEach((sh, i) => {
+    $("sa" + i).value = sh.a;
+    if (document.activeElement !== $("st" + i)) $("st" + i).value = sh.t;
+    if (document.activeElement !== $("gz" + i)) $("gz" + i).value = sh.ziel;
+  });
+  updateGoals(); updateSum();
+}
+function updateGoals() {
+  form.shifts.forEach((sh, i) => {
+    $("goal" + i).hidden = !sh.a;
+    if (!sh.a) return;
+    const h = Number(form.today[sh.a]) || 0;
+    $("gh" + i).textContent = h + " %";
+    const d = $("gd" + i);
+    if (sh.ziel === "") { d.textContent = "–"; d.className = "delta"; return; }
+    const diff = Number(sh.ziel) - h;
+    d.textContent = (diff > 0 ? "+" : diff < 0 ? "−" : "±") + Math.abs(diff) + " Pkt.";
+    d.className = "delta " + (diff > 0 ? "up" : diff < 0 ? "down" : "");
+  });
+}
+function updateSum() {
+  const s = sum(), bar = $("sumbar");
+  $("sumval").textContent = s + " %";
+  $("summeter").style.width = Math.min(100, s) + "%";
+  bar.classList.toggle("ok", s === 100); bar.classList.toggle("over", s > 100);
+  $("sumstate").textContent = s === 100 ? "passt" : s > 100 ? `${s - 100} % zu viel` : `noch ${100 - s} % offen`;
+  const missing = [];
+  if (!form.pos) missing.push("Position"); if (!form.feld) missing.push("Geschäftsfeld"); if (!form.gruppe) missing.push("Gruppe"); if (s !== 100) missing.push("Summe 100 %");
+  $("submit").disabled = missing.length > 0;
+  $("submitHint").textContent = missing.length ? "Es fehlt noch: " + missing.join(", ") + "." : "Bereit zum Absenden.";
+}
+function wireForm() {
+  $("pos").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { form.pos = b.dataset.v; syncForm(); } });
+  $("feld").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { form.feld = b.dataset.v; syncForm(); } });
+  $("ges").addEventListener("change", (e) => { form.ges = e.target.value; });
+  $("gruppe").addEventListener("change", (e) => { form.gruppe = e.target.value; if (form.gruppe) $("gsel").value = form.gruppe; updateSum(); });
+  $("sonstText").addEventListener("input", (e) => { form.sonstText = e.target.value; });
+  $("arealist").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-d]"); if (!b) return;
+    const k = b.dataset.k; form.today[k] = Math.max(0, Math.min(100, (Number(form.today[k]) || 0) + Number(b.dataset.d))); syncForm();
+  });
+  $("arealist").addEventListener("input", (e) => {
+    const k = e.target.dataset.k; if (!k) return;
+    let v = Math.round(Number(e.target.value)); if (!isFinite(v)) v = 0; form.today[k] = Math.max(0, Math.min(100, v)); updateSum(); updateGoals();
+  });
+  $("arealist").addEventListener("change", () => syncForm());
+  $("ideallist").addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return; const k = b.closest("[data-ideal]").dataset.ideal;
+    if (form.ideal[k] === b.dataset.v) delete form.ideal[k]; else form.ideal[k] = b.dataset.v; syncForm();
+  });
+  $("shifts").addEventListener("change", (e) => {
+    const i = e.target.dataset.shift; if (i == null) return;
+    form.shifts[i].a = e.target.value; if (!e.target.value) form.shifts[i].ziel = ""; syncForm();
+  });
+  $("shifts").addEventListener("input", (e) => {
+    const t = e.target.dataset.shiftT; if (t != null) form.shifts[t].t = e.target.value;
+    const z = e.target.dataset.shiftZ;
+    if (z != null) {
+      if (e.target.value === "") form.shifts[z].ziel = "";
+      else { let v = Math.round(Number(e.target.value)); if (!isFinite(v)) v = 0; form.shifts[z].ziel = Math.max(0, Math.min(100, v)); }
+      updateGoals();
+    }
+  });
+  $("shifts").addEventListener("focusout", (e) => { if (e.target.dataset.shiftZ != null) syncForm(); });
+  $("form").addEventListener("submit", async (e) => {
+    e.preventDefault(); if ($("submit").disabled) return;
+    const btn = $("submit"); btn.disabled = true; btn.textContent = "Wird gespeichert …"; $("banner").hidden = true;
+    const data = { pos: form.pos, feld: form.feld, ges: form.ges || null, gruppe: form.gruppe, today: { ...form.today }, sonstText: form.sonstText,
+      ideal: { ...form.ideal }, shifts: form.shifts.filter((s) => s.a || s.t.trim()).map((s) => ({ a: s.a, ziel: s.a && s.ziel !== "" ? s.ziel : null, t: s.t })) };
+    try {
+      const r = await api("/api/submit", { method: "POST", body: JSON.stringify({ data, ...(own || {}) }) });
+      own = { id: r.id, token: r.token };
+      ls.set("zv-last", JSON.stringify({ own, form }));
+      $("form").hidden = true; $("done").hidden = false; window.scrollTo({ top: 0 });
+    } catch (err) {
+      showBanner(err.status === 400 ? err.message : "Speichern hat nicht geklappt. Bitte Internetverbindung prüfen und noch einmal versuchen.", true);
+    } finally { btn.textContent = "Antwort absenden"; updateSum(); }
+  });
+  $("next").addEventListener("click", () => { own = null; form = blankForm(); ls.del("zv-last");
+    $("done").hidden = true; $("form").hidden = false; syncForm(); window.scrollTo({ top: 0 }); });
+  $("edit").addEventListener("click", () => { $("done").hidden = true; $("form").hidden = false; syncForm(); });
+}
+function showBanner(text, err) { const b = $("banner"); b.textContent = text; b.classList.toggle("err", !!err); b.hidden = false; }
+
+// ---------- Auswertungs-Bausteine ----------
+function norm(r) {
+  const t = r.today || {}, s = AREAS.reduce((x, a) => x + (Number(t[a.k]) || 0), 0) || 1;
+  return Object.fromEntries(AREAS.map((a) => [a.k, ((Number(t[a.k]) || 0) * 100) / s]));
+}
+function prep(list) { return list.map((r) => Object.assign({}, r, { _n: norm(r) })); }
+function stats(list) {
+  const n = list.length, out = {};
+  AREAS.forEach((a) => {
+    const vals = list.map((r) => r._n[a.k]);
+    out[a.k] = { mean: n ? vals.reduce((x, y) => x + y, 0) / n : 0, min: n ? Math.min(...vals) : 0, max: n ? Math.max(...vals) : 0 };
+  });
+  out.ops = { mean: n ? list.reduce((x, r) => x + AREAS.filter((a) => a.op).reduce((y, a) => y + r._n[a.k], 0), 0) / n : 0 };
+  return out;
+}
+function idealCounts(list, k) {
+  const c = { mehr: 0, gleich: 0, weniger: 0 }; list.forEach((r) => { const v = r.ideal && r.ideal[k]; if (c[v] != null) c[v]++; }); return c;
+}
+function barsHTML(list, ref) {
+  const st = stats(list), refSt = ref ? stats(ref) : null;
+  const scale = Math.max(30, Math.ceil(Math.max(...AREAS.map((a) => st[a.k].max), ...(refSt ? AREAS.map((a) => refSt[a.k].mean) : [0])) / 10) * 10);
+  const x = (v) => (v / scale) * 100;
+  return `<div class="bars">${AREAS.map((a) => { const s = st[a.k];
+    return `<div class="bar"><span class="lbl">${esc(areaLabel(a.k))}</span><span class="track" aria-hidden="true">
+      <span class="range" style="left:${x(s.min)}%;width:${Math.max(0.5, x(s.max) - x(s.min))}%"></span>
+      <span class="fill" style="width:${x(s.mean)}%"></span>
+      ${refSt ? `<span class="ref" style="left:calc(${x(refSt[a.k].mean)}% - 1px)" title="Alle: ${fmt(refSt[a.k].mean)} %"></span>` : ""}</span>
+      <span class="val">${fmt(s.mean)} %</span></div>`; }).join("")}</div>
+    <div class="legend"><span><i style="background:var(--accent)"></i>Durchschnitt</span><span><i style="background:var(--deep);height:2px;opacity:.55"></i>Spanne (min–max)</span>
+    ${refSt ? '<span><i style="background:var(--warn);width:2px;height:12px"></i>Durchschnitt aller</span>' : ""}<span>Skala 0–${scale} %</span></div>`;
+}
+function idealHTML(list) {
+  return `<div class="bars">${AREAS.filter((a) => !a.noIdeal).map((a) => { const c = idealCounts(list, a.k), tot = c.mehr + c.gleich + c.weniger;
+    const p = (v) => (tot ? (v / tot) * 100 : 0), net = tot ? Math.round(p(c.mehr) - p(c.weniger)) : null;
+    return `<div class="stack"><span class="lbl">${esc(areaLabel(a.k))}</span>
+      <span class="s" aria-label="mehr ${c.mehr}, gleich ${c.gleich}, weniger ${c.weniger}"><i style="width:${p(c.mehr)}%;background:var(--more)"></i><i style="width:${p(c.gleich)}%;background:var(--same)"></i><i style="width:${p(c.weniger)}%;background:var(--less)"></i></span>
+      <span class="net" style="color:${net > 0 ? "var(--more)" : net < 0 ? "var(--less)" : "var(--mute)"}">${net == null ? "–" : (net > 0 ? "+" : "") + net}</span></div>`; }).join("")}</div>
+    <div class="legend"><span><i style="background:var(--more)"></i>mehr</span><span><i style="background:var(--same)"></i>gleich</span><span><i style="background:var(--less)"></i>weniger</span><span>Saldo = % mehr minus % weniger</span></div>`;
+}
+// Ziele je Bereich: wie viele haben sich dort ein Ziel gesetzt, Ø heute → Ø Ziel
+function goalsHTML(list) {
+  const by = {};
+  list.forEach((r) => (r.shifts || []).forEach((s) => {
+    if (!s.a || s.ziel == null) return;
+    const h = Number((r.today || {})[s.a]) || 0;
+    (by[s.a] = by[s.a] || []).push({ h, z: Number(s.ziel) });
+  }));
+  const keys = Object.keys(by).sort((a, b) => by[b].length - by[a].length);
+  if (!keys.length) return '<p class="empty">Noch keine persönlichen Ziele eingetragen.</p>';
+  const mean = (arr, f) => arr.reduce((x, y) => x + f(y), 0) / arr.length;
+  return `<div class="tablewrap"><table class="goals"><thead><tr><th>Bereich</th><th>Ziele</th><th>Ø heute</th><th>Ø Ziel</th><th>Ø Veränderung</th></tr></thead><tbody>
+    ${keys.map((k) => { const a = by[k], h = mean(a, (x) => x.h), z = mean(a, (x) => x.z), d = z - h;
+      return `<tr><td>${esc(areaLabel(k))}</td><td>${a.length}</td><td>${fmt(h)} %</td><td>${fmt(z)} %</td>
+        <td style="color:${d > 0 ? "var(--more)" : d < 0 ? "var(--less)" : "var(--mute)"};font-weight:700">${d > 0 ? "+" : d < 0 ? "−" : "±"}${fmt(Math.abs(d))} Pkt.</td></tr>`; }).join("")}
+    </tbody></table></div>`;
+}
+function textsHTML(list) {
+  const by = {};
+  list.forEach((r) => (r.shifts || []).forEach((s) => {
+    if (!s.t) return;
+    const h = s.a ? Number((r.today || {})[s.a]) || 0 : null;
+    (by[s.a || "_"] = by[s.a || "_"] || []).push({ t: s.t, tag: s.a && s.ziel != null ? `${h} % → ${s.ziel} %` : "" });
+  }));
+  const keys = Object.keys(by).sort((a, b) => by[b].length - by[a].length);
+  if (!keys.length) return '<p class="empty">Noch keine Antworten zu „Was muss passieren?“.</p>';
+  return `<div class="texts">${keys.map((k) => `<div class="tgroup"><h3>${esc(k === "_" ? "Ohne Bereich" : areaLabel(k))} · ${by[k].length}</h3><ul>${by[k].map((x) =>
+    `<li>${x.tag ? `<span class="tag">${esc(x.tag)}</span> ` : ""}${esc(x.t)}</li>`).join("")}</ul></div>`).join("")}</div>`;
+}
+
+// ---------- Gruppenansicht ----------
+let gTimer = null;
+async function loadGroup() {
+  const g = $("gsel").value;
+  try {
+    const r = await api("/api/results?gruppe=" + encodeURIComponent(g));
+    if ($("gsel").value !== g) return;
+    renderGroup(g, r);
+  } catch (_) { $("gstatus").textContent = "Die Antworten sind gerade nicht erreichbar. Die Seite versucht es weiter."; }
+}
+function renderGroup(g, r) {
+  $("gstatus").textContent = `${r.n} ${r.n === 1 ? "Antwort" : "Antworten"} in ${GROUP_LABEL[g].split(" · ")[0]}` + (r.noGroup ? ` · ${r.noGroup} ohne Gruppenangabe (nur in der Gesamtauswertung)` : "") + " · aktualisiert sich automatisch";
+  if (r.n < MIN_N) { $("gbody").innerHTML = `<p class="empty">Die Auswertung erscheint ab ${MIN_N} Antworten, damit niemand einzeln erkennbar ist. Bisher: ${r.n}.</p>`; return; }
+  const list = prep(r.list), all = r.all ? prep(r.all) : null;
+  $("gbody").innerHTML = `<div class="cols">
+    <section class="section"><div class="section-head"><h2>Zeitverteilung heute</h2><span class="hint">${r.n} Antworten</span></div>${barsHTML(list, all)}</section>
+    <section class="section"><div class="section-head"><h2>Idealzustand</h2></div>${idealHTML(list)}</section></div>
+    <section class="section"><div class="section-head"><h2>Persönliche Ziele</h2></div>${goalsHTML(list)}</section>
+    <section class="section"><div class="section-head"><h2>Was muss passieren?</h2></div>${textsHTML(list)}</section>`;
+}
+
+// ---------- Gesamtansicht (nur mit Admin-Schlüssel) ----------
+let responses = [], confirmDelete = false, aTimer = null;
+function loginHTML(msg) {
+  return `<section class="section"><h2>Gesamtauswertung</h2><p class="hint">Nur für die Moderation. Bitte den Admin-Schlüssel eingeben.</p>
+    <form id="login" class="actions"><input id="key" type="password" autocomplete="current-password" aria-label="Admin-Schlüssel" placeholder="Admin-Schlüssel"
+      style="font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 10px;min-height:42px;flex:1;min-width:0">
+      <button class="primary" type="submit">Öffnen</button></form>${msg ? `<p class="banner err">${esc(msg)}</p>` : ""}</section>`;
+}
+function showLogin(msg) {
+  $("gesbody").innerHTML = loginHTML(msg);
+  $("login").addEventListener("submit", (e) => { e.preventDefault(); adminKey = $("key").value.trim(); loadAdmin(true); });
+}
+async function loadAdmin(fromLogin) {
+  if (!adminKey) { showLogin(); return; }
+  try {
+    const r = await api("/api/admin", { headers: { Authorization: "Bearer " + adminKey } });
+    ls.set("zv-admin", adminKey); $("tab-gesamt").hidden = false;
+    responses = prep(r.responses).sort((a, b) => String(a.at).localeCompare(String(b.at)));
+    if (!confirmDelete) renderGesamt();
+  } catch (err) {
+    if (err.status === 401) { adminKey = ""; ls.del("zv-admin"); showLogin(fromLogin ? "Der Schlüssel stimmt nicht." : ""); }
+    else if (fromLogin || !responses.length) showLogin("Die Antworten sind gerade nicht erreichbar.");
+  }
+}
+function renderGesamt() {
+  const el = $("gesbody");
+  if (!responses.length) { el.innerHTML = '<section class="section"><h2>Gesamtauswertung</h2><p class="empty">Noch keine Antworten. Sobald die ersten eingehen, erscheinen sie hier (Aktualisierung alle 15 Sekunden).</p></section>'; return; }
+  const segs = [["Alle", responses], [POS.GF, responses.filter((r) => r.pos === "GF")], [POS.FE2, responses.filter((r) => r.pos === "FE2")],
+    [FELD.P, responses.filter((r) => r.feld === "P")], [FELD.BB, responses.filter((r) => r.feld === "BB")],
+    ...GROUPS.map((g) => ["G" + g, responses.filter((r) => r.gruppe === g)])];
+  const st = segs.map(([, l]) => (l.length >= MIN_N ? stats(l) : null));
+  const cell = (v) => `<td style="background:color-mix(in srgb, var(--accent) ${Math.min(70, v * 2.2)}%, transparent)">${fmt(v)}</td>`;
+  const rows = AREAS.map((a) => `<tr class="${a.op ? "sub" : ""}"><td>${esc(a.l)}</td>${segs.map((_, i) => (st[i] ? cell(st[i][a.k].mean) : '<td class="na">–</td>')).join("")}</tr>`);
+  rows.splice(AREAS.findIndex((a) => a.op), 0, `<tr><td><b>Operative Projektarbeit gesamt</b></td>${segs.map((_, i) => (st[i] ? `<td><b>${fmt(st[i].ops.mean)}</b></td>` : '<td class="na">–</td>')).join("")}</tr>`);
+  el.innerHTML = `
+    <section class="section"><div class="section-head"><h2>Gesamtauswertung</h2>
+      <div class="actions"><button class="ghost" type="button" id="csv">CSV herunterladen</button><button class="ghost danger" type="button" id="del">Alle Antworten löschen</button><button class="ghost" type="button" id="logout">Abmelden</button></div></div>
+      <div id="delbox"></div>
+      <div class="kpis">
+        <div class="kpi"><b>${responses.length}</b><span>Antworten</span></div>
+        <div class="kpi"><b>${segs[1][1].length} / ${segs[2][1].length}</b><span>GF / 2. Führungsebene</span></div>
+        <div class="kpi"><b>${segs[3][1].length} / ${segs[4][1].length}</b><span>Planung / Baumgmt. &amp; Beratung</span></div>
+        <div class="kpi"><b>${responses.filter((r) => r.gruppe).length}</b><span>mit Gruppenangabe</span></div>
+      </div>
+    </section>
+    <section class="section"><div class="section-head"><h2>Durchschnittliche Zeitverteilung in %</h2><span class="hint">„–“ = weniger als ${MIN_N} Antworten</span></div>
+      <div class="tablewrap"><table class="heat"><thead><tr><th>Bereich</th>${segs.map(([l, list]) => `<th>${esc(l)}<br><span style="text-transform:none;letter-spacing:0">n=${list.length}</span></th>`).join("")}</tr></thead>
+      <tbody>${rows.join("")}</tbody></table></div></section>
+    <div class="cols">
+      <section class="section"><div class="section-head"><h2>Spanne über alle Antworten</h2></div>${barsHTML(responses, null)}</section>
+      <section class="section"><div class="section-head"><h2>Idealzustand, alle</h2></div>${idealHTML(responses)}</section>
+    </div>
+    <section class="section"><div class="section-head"><h2>Persönliche Ziele, alle</h2></div>${goalsHTML(responses)}</section>
+    <section class="section"><div class="section-head"><h2>Was muss passieren? Alle Antworten</h2></div>${textsHTML(responses)}</section>`;
+  $("csv").addEventListener("click", downloadCSV);
+  $("del").addEventListener("click", () => { confirmDelete = true; renderDelBox(); });
+  $("logout").addEventListener("click", () => { adminKey = ""; ls.del("zv-admin"); $("tab-gesamt").hidden = true; responses = []; location.hash = "#eingabe"; });
+  renderDelBox();
+}
+function renderDelBox() {
+  const box = $("delbox"); if (!box) return;
+  box.innerHTML = confirmDelete ? `<div class="confirm"><span>Alle ${responses.length} Antworten endgültig löschen?</span>
+    <button class="ghost danger" type="button" id="delyes">Endgültig löschen</button><button class="ghost" type="button" id="delno">Abbrechen</button></div>` : "";
+  if (!confirmDelete) return;
+  $("delno").addEventListener("click", () => { confirmDelete = false; renderDelBox(); });
+  $("delyes").addEventListener("click", async (e) => {
+    e.target.disabled = true; e.target.textContent = "Wird gelöscht …";
+    try { await api("/api/admin", { method: "DELETE", headers: { Authorization: "Bearer " + adminKey } }); responses = []; }
+    catch (_) { showBanner("Löschen hat nicht geklappt. Bitte erneut versuchen.", true); }
+    confirmDelete = false; renderGesamt();
+  });
+}
+function downloadCSV() {
+  const head = ["Position", "Geschäftsfeld", "Gesellschaft", "Gruppe", ...AREAS.map((a) => "Heute % " + a.l), ...AREAS.filter((a) => !a.noIdeal).map((a) => "Ideal " + a.l),
+    "Sonstiges (Text)", ...[1, 2, 3].flatMap((i) => [`Verschiebung ${i} Bereich`, `Verschiebung ${i} heute %`, `Verschiebung ${i} Ziel %`, `Verschiebung ${i} Text`]), "Zeitpunkt"];
+  const q = (v) => { const s = v == null ? "" : String(v); return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  const lines = [head.map(q).join(";")].concat(responses.map((r) => {
+    const sh = r.shifts || [];
+    return [POS[r.pos] || "", FELD[r.feld] || "", r.ges || "", r.gruppe || "", ...AREAS.map((a) => (Number((r.today || {})[a.k]) || 0)),
+      ...AREAS.filter((a) => !a.noIdeal).map((a) => (r.ideal || {})[a.k] || ""), r.sonstText || "",
+      ...[0, 1, 2].flatMap((i) => { const s = sh[i]; if (!s) return ["", "", "", ""];
+        return [s.a ? areaLabel(s.a) : "", s.a ? Number((r.today || {})[s.a]) || 0 : "", s.ziel ?? "", s.t || ""]; }),
+      r.at ? new Date(r.at).toLocaleString("de-DE") : ""].map(q).join(";");
+  }));
+  const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "Zeitverteilung_Unternehmensentwicklung.csv";
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+
+// ---------- Navigation ----------
+function route() {
+  let v = (location.hash || "#eingabe").slice(1);
+  if (!["eingabe", "gruppe", "gesamt"].includes(v)) v = "eingabe";
+  ["eingabe", "gruppe", "gesamt"].forEach((n) => { $("view-" + n).hidden = n !== v; const t = $("tab-" + n); if (n === v) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current"); });
+  clearInterval(gTimer); clearInterval(aTimer);
+  if (v === "gesamt") $("tab-gesamt").hidden = false;
+  if (v === "gruppe") { $("gbody").innerHTML = ""; $("gstatus").textContent = "Antworten werden geladen …"; loadGroup(); gTimer = setInterval(loadGroup, POLL_MS); }
+  if (v === "gesamt") { loadAdmin(false); aTimer = setInterval(() => { if (adminKey) loadAdmin(false); }, POLL_MS); }
+}
+
+// ---------- Start ----------
+buildForm(); wireForm();
+try { const last = JSON.parse(ls.get("zv-last") || "null"); if (last && last.own && last.form) { own = last.own; form = Object.assign(blankForm(), last.form); } } catch (_) {}
+$("gsel").innerHTML = GROUPS.map((g) => `<option value="${g}">${esc(GROUP_LABEL[g])}</option>`).join("");
+const gs = ls.get("zv-gsel"); if (gs && GROUPS.includes(gs)) $("gsel").value = gs; else if (form.gruppe) $("gsel").value = form.gruppe;
+$("gsel").addEventListener("change", () => { ls.set("zv-gsel", $("gsel").value); $("gbody").innerHTML = ""; $("gstatus").textContent = "Antworten werden geladen …"; loadGroup(); });
+$("tab-gesamt").hidden = !adminKey;
+syncForm();
+window.addEventListener("hashchange", route);
+route();
+
+</script>
+</body>
+</html>
