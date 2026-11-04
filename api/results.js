@@ -16,7 +16,7 @@ export default async function handler(req, res) {
       n: list.length,
       total: rs.length,
       noGroup: rs.filter((r) => !r.gruppe).length,
-      list: list.length >= MIN_N ? shuffle(list.map((r) => ({ today: r.today, ideal: r.ideal, shifts: r.shifts }))) : [],
+      list: list.length >= MIN_N ? shuffle(list.map((r) => ({ today: r.today, ideal: r.ideal, refl: r.refl }))) : [],
       all: rs.length >= MIN_N ? rs.map((r) => ({ today: r.today })) : null,
     });
   } catch (e) {
